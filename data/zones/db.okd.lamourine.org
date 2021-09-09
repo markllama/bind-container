@@ -1,0 +1,32 @@
+$ORIGIN okd.lamourine.org.
+$TTL 1W
+@	IN	SOA	ns1.okd.lamourine.org.	root (
+			2019070700	; serial
+			3H		; refresh (3 hours)
+			30M		; retry (30 minutes)
+			2W		; expiry (2 weeks)
+			1W )		; minimum (1 week)
+	IN	NS	ns1.okd.lamourine.org.
+;	IN	MX 10	smtp.okd.lamourine.org.
+;
+;
+ns1		IN	A	172.16.3.2
+;smtp		IN	A	172.16.3.2
+;
+bootstrap	IN	A	172.16.3.5
+;
+helper	IN	A	172.16.3.11
+;
+api	IN	A	172.16.3.11
+api-int	IN	A	172.16.3.11 
+;
+*.apps	IN	A	172.16.3.11
+;
+node0	IN	A	172.16.3.21
+node1	IN	A	172.16.3.22 
+node2	IN	A	172.16.3.23 
+;
+;worker0	IN	A	172.16.3.31
+;worker1	IN	A	172.16.3.32
+;
+;EOF

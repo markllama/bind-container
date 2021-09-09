@@ -1,0 +1,24 @@
+$ORIGIN 3.16.172.in-addr.arpa.
+$TTL 300
+@ IN SOA ns1.example.org. markllama.gmail.com. (
+  2021090701 ;
+  21600 ;
+  3600 ;
+  604800 ;
+  86400 ) ;
+
+  IN NS ns1.example.org.
+
+2 IN PTR ns1.example.org.
+5  IN	PTR	bootstrap.okd.lamourine.org. 
+
+11	IN PTR	api.okd.lamourine.org. 
+11	IN PTR	api-int.okd.lamourine.org. 
+;
+;
+21	IN	PTR	node0.okd.lamourine.org
+22  IN	PTR	node1.okd.lamourine.org
+23	IN	PTR	node2.okd.lamourine.org
+;
+;31	IN	PTR	worker0.ocp4.lamourine.org. 
+;32	IN	PTR	worker1.ocp4.lamourine.org. 
