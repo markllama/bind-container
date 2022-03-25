@@ -12,11 +12,11 @@ set -ex
 
 data_dir="/data"
 
-function parse_args() {
-    while getopts "$OPTSTRING" opt ; do
-
-    done
-}
+#function parse_args() {
+#    while getopts "$OPTSTRING" opt ; do
+#
+#    done
+#}
 
 function main() {
     local named_conf="$data_dir/named.conf"

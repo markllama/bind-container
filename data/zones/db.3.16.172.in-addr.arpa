@@ -16,9 +16,6 @@ $TTL 300
 11	IN PTR	api-int.okd.lamourine.org. 
 ;
 ;
-21	IN	PTR	node0.okd.lamourine.org
-22  IN	PTR	node1.okd.lamourine.org
-23	IN	PTR	node2.okd.lamourine.org
-;
-;31	IN	PTR	worker0.ocp4.lamourine.org. 
-;32	IN	PTR	worker1.ocp4.lamourine.org. 
+21	IN	PTR	master1.okd.lamourine.org.
+22	IN	PTR	master2.okd.lamourine.org.
+23	IN	PTR	master3.okd.lamourine.org.

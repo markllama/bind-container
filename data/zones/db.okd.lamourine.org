@@ -22,9 +22,9 @@ api-int	IN	A	172.16.3.11
 ;
 *.apps	IN	A	172.16.3.11
 ;
-node0	IN	A	172.16.3.21
-node1	IN	A	172.16.3.22 
-node2	IN	A	172.16.3.23 
+master1	IN	A	172.16.3.21
+master2	IN	A	172.16.3.22 
+master3	IN	A	172.16.3.23 
 ;
 ;worker0	IN	A	172.16.3.31
 ;worker1	IN	A	172.16.3.32
