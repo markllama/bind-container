@@ -12,11 +12,11 @@ set -ex
 
 data_dir="/data"
 
-function parse_args() {
-    while getopts "$OPTSTRING" opt ; do
-
-    done
-}
+#function parse_args() {
+#    while getopts "$OPTSTRING" opt ; do
+#
+#    done
+#}
 
 function main() {
     local named_conf="$data_dir/named.conf"
@@ -26,7 +26,7 @@ function main() {
     #
     check_data_dir $data_dir
     check_named_conf $named_conf
-    set_ownership $data_dir
+#    set_ownership $data_dir
     #create_rndc_conf $rndc_conf
 
     # Hand over control to the DHCPD process
@@ -56,7 +56,7 @@ function get_interface() {
     # Single argument to command line is interface name
     if [ $# -eq 1 -a -n "$1" ]; then
         # skip wait-for-interface behavior if found in path
-        if ! which "$1" >/dev/null; then
+        if ! which "$1" 2>&1 >/dev/null; then
             # loop until interface is found, or we give up
             NEXT_WAIT_TIME=1
             until [ -e "/sys/class/net/$1" ] || [ $NEXT_WAIT_TIME -eq 4 ]; do
@@ -92,6 +92,11 @@ function check_data_dir() {
         echo 'If you just want to keep your configuration in "data/", add -v "$(pwd)/data:/data" to the docker run command line.'
         exit 1
     fi
+
+    if [ ! -r "$data_dir" ] ; then
+        echo "data_dir must also be readable by ${USER}"
+        exit 1
+    fi
 }
 
 function check_named_conf() {
@@ -107,6 +112,20 @@ function check_named_conf() {
 
 function set_ownership() {
     local data_dir=$1
+
+    echo "====="
+    id -a
+    echo
+
+    cat /etc/passwd
+    echo
+    cat /etc/group
+    echo
+    
+    ls -ld ${data_dir}
+    echo
+    ls -l ${data_dir}
+    echo
     
     uid=$(stat -c%u "$data_dir")
     gid=$(stat -c%g "$data_dir")
@@ -133,6 +152,6 @@ function set_ownership() {
 # MAIN
 #---------------------------------------------------------------------------------------------
 
+ls /sys/class/net
 
-
-main $*
+main ${INTERFACE} # $*
