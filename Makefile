@@ -5,7 +5,7 @@ REPO_USER=markllama
 IMAGE_NAME=bind
 CONTAINER_NAME=named
 BUILD_CONTAINER_NAME=bind-build
-INTERFACE=br-prov
+INTERFACE=provisioning
 DATADIR=$(shell pwd)/data
 
 $(IMAGE_NAME)-oci.tgz: build
@@ -21,13 +21,12 @@ clean:
 
 run:
 	+podman run -d --init --privileged --name ${CONTAINER_NAME} --net=host \
-	  --volume ${DATADIR}:/data \
-	  --env INTERFACE=$(INTERFACE) \
-	  $(IMAGE_REPO)/$(REPO_USER)/${IMAGE_NAME}
-
+		--volume ${DATADIR}:/data \
+		--env INTERFACE=$(INTERFACE) \
+	  $(IMAGE_REPO)/$(REPO_USER)/${IMAGE_NAME} ${INTERFACE}
 
 cli:
-	+podman run -it --rm --privileged --name ${CONTAINER_NAME} --net=host \
+	+podman run -it --rm --privileged --init --name ${CONTAINER_NAME} --net=host \
 	  --volume ${DATADIR}:/data \
 	  --entrypoint=/bin/bash \
 	  ${IMAGE_REPO}/${REPO_USER}/${IMAGE_NAME}
