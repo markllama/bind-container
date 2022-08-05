@@ -26,11 +26,11 @@ function main() {
     #
     check_data_dir $data_dir
     check_named_conf $named_conf
-#    set_ownership $data_dir
+    set_ownership $data_dir
     #create_rndc_conf $rndc_conf
 
     # Hand over control to the DHCPD process
-    $(run_cmd) /usr/sbin/named \
+    $(run_cmd) /usr/sbin/named -u named \
                -d 1 \
                -g \
                -c $named_conf
@@ -71,17 +71,6 @@ function get_interface() {
     echo $IFACE
 }
 
-# No arguments mean all interfaces
-#if [ -z "$1" ]; then
-#    IFACE=" "
-#fi
-
-#if [ -z "$IFACE" ]; then
-#    # Run another binary
-#    $run "$@"
-#fi
-    
-# Run dhcpd for specified interface or all interfaces
 
 
 function check_data_dir() {
@@ -113,22 +102,9 @@ function check_named_conf() {
 function set_ownership() {
     local data_dir=$1
 
-    echo "====="
-    id -a
-    echo
-
-    cat /etc/passwd
-    echo
-    cat /etc/group
-    echo
-    
-    ls -ld ${data_dir}
-    echo
-    ls -l ${data_dir}
-    echo
-    
     uid=$(stat -c%u "$data_dir")
     gid=$(stat -c%g "$data_dir")
+
     if [ $gid -ne 0 ]; then
         groupmod -g $gid named
     fi
