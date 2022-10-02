@@ -26,7 +26,7 @@ function buildah_run() {
     buildah run ${CONTAINER_NAME} $*
 }
 
-# This function replaces a file or directory in the container with a link to a 
+# This function replaces a file or directory in the container with a link to a
 # location in an imported volume
 function replace_with_link() {
     local FILE=$1
@@ -40,7 +40,7 @@ function replace_with_link() {
 #
 # ==================================================================================
 
-function set_container_metadata() {   
+function set_container_metadata() {
     # Set container metadata
     buildah from --name ${CONTAINER_NAME} ${BASE_IMAGE}
     buildah config --label maintainer="${MAINTAINER}" ${CONTAINER_NAME}
@@ -51,17 +51,17 @@ function install_and_configure_systemd_services() {
     # Install service packages
     buildah_run ${DNF} -y install ${RPMS[@]}
     buildah_run ${DNF} -y clean all
-    
+
     # The remaining input is mounted on /data
     # Replace the stock config files with symlinks to the import directory: /opt
     replace_with_link /etc/sysconfig/named /opt/etc/sysconfig/named
     replace_with_link /var/named/dynamic /opt/named/dynamic
     replace_with_link /etc/rndc.key /opt/etc/rndc.key
-    
+
     # Enable services inside the container
     buildah_run systemctl enable ${SERVICES[@]}
     # Start with systemd
-    buildah config --cmd '["/usr/sbin/init"]' ${CONTAINER_NAME} 
+    buildah config --cmd '["/usr/sbin/init"]' ${CONTAINER_NAME}
 }
 
 function finalize_container_image() {
