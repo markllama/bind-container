@@ -5,7 +5,6 @@ REPO_USER=markllama
 IMAGE_NAME=bind
 CONTAINER_NAME=named
 BUILD_CONTAINER_NAME=bind-build
-INTERFACE=provisioning
 DATADIR=$(shell pwd)/data
 
 $(IMAGE_NAME)-oci.tgz: build
@@ -20,17 +19,15 @@ clean:
 	-podman rmi ${IMAGE_NAME}
 
 run:
-	+podman run -d --init --privileged --name ${CONTAINER_NAME} --net=host \
-		--volume ${DATADIR}:/data \
-		--env INTERFACE=$(INTERFACE) \
-	  $(IMAGE_REPO)/$(REPO_USER)/${IMAGE_NAME} ${INTERFACE}
+	+podman run -d --privileged --name ${CONTAINER_NAME} --net=host \
+		--volume ${DATADIR}:/opt:Z \
+	  $(IMAGE_REPO)/$(REPO_USER)/${IMAGE_NAME}
 
 cli:
 	+podman run -it --rm --privileged --init --name ${CONTAINER_NAME} --net=host \
-	  --volume ${DATADIR}:/data \
+	  --volume ${DATADIR}:/opt:Z \
 	  --entrypoint=/bin/bash \
 	  ${IMAGE_REPO}/${REPO_USER}/${IMAGE_NAME}
-
 
 stop:
 	-podman stop ${CONTAINER_NAME}
@@ -41,3 +38,8 @@ tag:
 
 push:
 	podman push $(IMAGE_REPO)/$(REPO_USER)/${IMAGE_NAME}
+
+$(DATADIR)/etc/rndc.key:
+	mkdir -p $(DATADIR)/etc/sysconfig
+	mkdir -p $(DATADIR)/named/dynamic
+	rndc-confgen -a -c $(DATADIR)/etc/rndc.key -k rndc-key

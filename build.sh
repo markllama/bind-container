@@ -1,26 +1,77 @@
 #!/bin/bash
-set -x
-MAINTAINER='markllama@gmail.com'
+#
+# This script uses buildah to compose a container image with a BIND 9 nameserver
+#
+MAINTAINER="Mark Lamourine <markllama@gmail.com>"
+
 CONTAINER_NAME=$1
-#BASE_IMAGE=registry.access.redhat.com/ubi8/ubi
-BASE_IMAGE=registry.fedoraproject.org/fedora-minimal:36
 IMAGE_NAME=$2
 
-RPMS=(bind bind-utils)
+#BASE_IMAGE=registry.access.redhat.com/ubi8/ubi
+BASE_IMAGE=registry.fedoraproject.org/fedora-minimal:36
+DNF=microdnf
+
+RPMS=(systemd bind)
 SERVICES=(named)
 
-# from fedora
-buildah from --name ${CONTAINER_NAME} ${BASE_IMAGE}
-buildah config --label maintainer="${MAINTAINER}" ${CONTAINER_NAME}
-#buildah config --env INTERFACE=eno1 ${CONTAINER_NAME}
+function main() {
+    set_container_metadata
+    install_and_configure_systemd_services
+    finalize_container_image
+}
 
-buildah run ${CONTAINER_NAME} microdnf -y install ${RPMS[@]}
-buildah run ${CONTAINER_NAME} microdnf clean all
 
-# copy entrypoint.sh
-buildah copy ${CONTAINER_NAME} entrypoint.sh /opt/entrypoint.sh
-buildah config --entrypoint '/opt/entrypoint.sh' ${CONTAINER_NAME}
+# A shortcut for commands that run inside the container
+function buildah_run() {
+    buildah run ${CONTAINER_NAME} $*
+}
 
-buildah commit ${CONTAINER_NAME} ${IMAGE_NAME}
+# This function replaces a file or directory in the container with a link to a 
+# location in an imported volume
+function replace_with_link() {
+    local FILE=$1
+    local LINK=$2
 
-buildah unmount ${CONTAINER_NAME}
+    buildah_run rm -rf ${FILE}
+    buildah_run ln -s ${LINK} ${FILE}
+}
+
+# ==================================================================================
+#
+# ==================================================================================
+
+function set_container_metadata() {   
+    # Set container metadata
+    buildah from --name ${CONTAINER_NAME} ${BASE_IMAGE}
+    buildah config --label maintainer="${MAINTAINER}" ${CONTAINER_NAME}
+    buildah config --volume /data ${CONTAINER_NAME}
+}
+
+function install_and_configure_systemd_services() {
+    # Install service packages
+    buildah_run ${DNF} -y install ${RPMS[@]}
+    buildah_run ${DNF} -y clean all
+    
+    # The remaining input is mounted on /data
+    # Replace the stock config files with symlinks to the import directory: /opt
+    replace_with_link /etc/sysconfig/named /opt/etc/sysconfig/named
+    replace_with_link /var/named/dynamic /opt/named/dynamic
+    replace_with_link /etc/rndc.key /opt/etc/rndc.key
+    
+    # Enable services inside the container
+    buildah_run systemctl enable ${SERVICES[@]}
+    # Start with systemd
+    buildah config --cmd '["/usr/sbin/init"]' ${CONTAINER_NAME} 
+}
+
+function finalize_container_image() {
+    #
+    # Finalize the new container image
+    #
+    buildah commit ${CONTAINER_NAME} ${IMAGE_NAME}
+    buildah unmount ${CONTAINER_NAME}
+}
+
+# ----------------------------------------------------------------------------------------------
+# Execute the main function
+main $*
