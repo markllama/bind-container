@@ -1,0 +1,7 @@
+[Unit]
+Description=Reset named as ID 0
+
+[Service]
+Type=oneshot
+
+ExecStart=/usr/libexec/named-root.sh

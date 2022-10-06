@@ -52,11 +52,21 @@ function install_and_configure_systemd_services() {
     buildah_run ${DNF} -y install ${RPMS[@]}
     buildah_run ${DNF} -y clean all
 
+    # replace the systemd service to one set for root
+    buildah copy ${CONTAINER_NAME} named.service /usr/lib/systemd/system/named.service
+    buildah copy ${CONTAINER_NAME} named.conf /etc/named.conf
+    
     # The remaining input is mounted on /data
     # Replace the stock config files with symlinks to the import directory: /opt
-    replace_with_link /etc/sysconfig/named /opt/etc/sysconfig/named
-    replace_with_link /var/named/dynamic /opt/named/dynamic
-    replace_with_link /etc/rndc.key /opt/etc/rndc.key
+    replace_with_link /etc/sysconfig/named /opt/named.env
+    replace_with_link /etc/rndc.conf /opt/rndc.conf
+
+    buildah copy --chown root:root --chmod 644 ${CONTAINER_NAME} named-root.service /usr/lib/systemd/system/named-root.service
+    buildah copy --chown root:root --chmod 755 ${CONTAINER_NAME} named-root.sh /usr/libexec/named-root.sh
+
+    # Named runs as root in the container to avoid additional user namespace mapping
+    buildah_run chown -R root:root /var/named
+#    buildah_run chown -R root:root /var/run/named
 
     # Enable services inside the container
     buildah_run systemctl enable ${SERVICES[@]}

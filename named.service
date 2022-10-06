@@ -1,8 +1,10 @@
 [Unit]
 Description=Berkeley Internet Name Domain (DNS)
 Wants=nss-lookup.target
+Wants=named-root.service
 Wants=named-setup-rndc.service
 Before=nss-lookup.target
+After=named-root.service
 After=named-setup-rndc.service
 After=network.target
 
@@ -11,7 +13,7 @@ Type=forking
 Environment=NAMEDCONF=/etc/named.conf
 EnvironmentFile=-/etc/sysconfig/named
 Environment=KRB5_KTNAME=/etc/named.keytab
-PIDFile=/run/named/named.pid
+PIDFile=/var/run/named/named.pid
 
 ExecStartPre=/bin/bash -c 'if [ ! "$DISABLE_ZONE_CHECKING" == "yes" ]; then /usr/sbin/named-checkconf -z "$NAMEDCONF"; else echo "Checking of zone files is disabled"; fi'
 ExecStart=/usr/sbin/named -u named -c ${NAMEDCONF} $OPTIONS
