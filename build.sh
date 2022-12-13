@@ -8,7 +8,7 @@ CONTAINER_NAME=$1
 IMAGE_NAME=$2
 
 #BASE_IMAGE=registry.access.redhat.com/ubi8/ubi
-BASE_IMAGE=registry.fedoraproject.org/fedora-minimal:36
+BASE_IMAGE=registry.fedoraproject.org/fedora-minimal:latest
 DNF=microdnf
 
 RPMS=(systemd bind)
