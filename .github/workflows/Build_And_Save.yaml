@@ -11,7 +11,7 @@ jobs:
       - name: Prepare JFrog CLI
         uses: jfrog/setup-jfrog-cli@v3
         env:
-          JF_URL: https://markllama.jfrog.io/artifactory
+          JF_URL: https://markllama.jfrog.io
           JF_USER: "markllama@gmail.com"
           JF_PASSWORD: ${{ secrets.JF_ACCESS_TOKEN }}
       - run: |
