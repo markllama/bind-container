@@ -11,8 +11,9 @@ jobs:
       - name: Prepare JFrog CLI
         uses: jfrog/setup-jfrog-cli@v3
         env:
-          JF_URL: markllama.jfrog.io
-          JF_ACCESS_TOKEN: ${{ secrets.JF_ACCESS_TOKEN }}
+          JF_URL: https://markllama.jfrog.io/artifactory
+          JF_USER: "markllama@gmail.com"
+          JF_PASSWORD: ${{ secrets.JF_ACCESS_TOKEN }}
       - run: |
           # Ping the server
           jf rt ping
