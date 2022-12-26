@@ -10,7 +10,7 @@ jobs:
     steps:
       # Clond the code
       - name: Clone the repository
-        uses: actions/checkout:v3
+        uses: actions/checkout@v3
 
       - name: is docker ready
         shell: bash {0}
