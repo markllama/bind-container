@@ -8,12 +8,35 @@ jobs:
   build_container:
     runs-on: ubuntu-latest
     steps:
-      - name: Prepare JFrog CLI
-        uses: jfrog/setup-jfrog-cli@v3
-        env:
-          JF_URL: https://markllama.jfrog.io
-          JF_USER: "markllama@gmail.com"
-          JF_PASSWORD: ${{ secrets.JF_ACCESS_TOKEN }}
-      - run: |
-          # Ping the server
-          jf rt ping
+      # Clond the code
+      - name: Clone the repository
+        uses: actions/checkout:v3
+
+      - name: is docker ready
+        shell: bash {0}
+        run: |
+          ls
+          pwd
+
+          
+      # prepare docker environment
+      
+      # Pull code
+
+
+      
+
+
+
+      # JFROG SETUP? Not really needed.
+      # - name: Prepare JFrog CLI
+      #   uses: jfrog/setup-jfrog-cli@v3
+      #   env:
+      #     JF_URL: https://markllama.jfrog.io
+      #     JF_USER: "markllama@gmail.com"
+      #     JF_PASSWORD: ${{ secrets.JF_ACCESS_TOKEN }}
+      # - run: |
+      #     # Ping the server
+      #     jf rt ping
+      # - run: |
+      #     jf config export 
