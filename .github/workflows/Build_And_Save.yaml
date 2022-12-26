@@ -3,7 +3,15 @@ name: Build and Save a Container Image
 
 on:
   workflow_dispatch:
+    inputs:
+      - name: REGISTRY_NAME
+        description: Registry Name
+        required: true
 
+      - name: REGISTRY_USER
+        description: Registry Username
+        required: true
+    
 jobs:
   build_container:
     runs-on: ubuntu-latest
@@ -17,16 +25,12 @@ jobs:
         run: |
           make build
           make tag
-
           
-      # prepare docker environment
-      
-      # Pull code
-
-
-      
-
-
+      - name: Log in to repo
+        shell: bash {0}
+        run: |
+          podman login --username ${{ inputs.REGISTRY_USER }} --password ${{ secrets.JFROG_ACCESS_TOKEN }} ${{ inputs.REGISTRY_NAME }}
+          
 
       # JFROG SETUP? Not really needed.
       # - name: Prepare JFrog CLI
