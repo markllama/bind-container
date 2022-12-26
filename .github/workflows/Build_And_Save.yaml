@@ -4,11 +4,11 @@ name: Build and Save a Container Image
 on:
   workflow_dispatch:
     inputs:
-      - name: REGISTRY_NAME
+      REGISTRY_NAME:
         description: Registry Name
         required: true
 
-      - name: REGISTRY_USER
+      REGISTRY_USER:
         description: Registry Username
         required: true
     
