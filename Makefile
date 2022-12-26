@@ -1,7 +1,7 @@
 #!make
 
-IMAGE_REPO=quay.io
-REPO_USER=markllama
+REGISTRY_NAME=quay.io
+REGISTRY_USER=markllama
 IMAGE_NAME=bind
 CONTAINER_NAME=named
 BUILD_CONTAINER_NAME=bind-build
@@ -21,23 +21,23 @@ clean:
 run:
 	+podman run -d --privileged --name ${CONTAINER_NAME} --net=host \
 		--volume ${DATADIR}:/opt:Z \
-	  $(IMAGE_REPO)/$(REPO_USER)/${IMAGE_NAME}
+	  $(REGISTRY_NAME)/$(REGISTRY_USER)/${IMAGE_NAME}
 
 cli:
 	+podman run -it --rm --privileged --init --name ${CONTAINER_NAME} --net=host \
 	  --volume ${DATADIR}:/opt:Z \
 	  --entrypoint=/bin/bash \
-	  ${IMAGE_REPO}/${REPO_USER}/${IMAGE_NAME}
+	  ${REGISTRY_NAME}/${REGISTRY_USER}/${IMAGE_NAME}
 
 stop:
 	-podman stop ${CONTAINER_NAME}
 	-podman rm ${CONTAINER_NAME}
 
 tag:
-	podman tag ${IMAGE_NAME} ${IMAGE_REPO}/${REPO_USER}/${IMAGE_NAME}
+	podman tag ${IMAGE_NAME} ${REGISTRY_NAME}/${REGISTRY_USER}/${IMAGE_NAME}
 
 push:
-	podman push $(IMAGE_REPO)/$(REPO_USER)/${IMAGE_NAME}
+	podman push $(REGISTRY_NAME)/$(REGISTRY_USER)/${IMAGE_NAME}
 
 $(DATADIR)/etc/rndc.key:
 	mkdir -p $(DATADIR)/etc/sysconfig

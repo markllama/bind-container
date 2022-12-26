@@ -20,11 +20,17 @@ jobs:
       - name: Clone the repository
         uses: actions/checkout@v3
 
-      - name: build the image
+      - name: Build the Image
         shell: bash {0}
         run: |
           make build
-          make tag
+
+      - name: Tag the image for the destination
+        shell: bash {0}
+        run: |
+          make -e tag
+          make -e push
+
           
       - name: Log in to repo
         shell: bash {0}
