@@ -12,11 +12,11 @@ jobs:
       - name: Clone the repository
         uses: actions/checkout@v3
 
-      - name: is docker ready
+      - name: build the image
         shell: bash {0}
         run: |
-          ls
-          pwd
+          make build
+          make tag
 
           
       # prepare docker environment
