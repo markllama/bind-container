@@ -35,7 +35,7 @@ jobs:
           make -e tag
           make -e push
         env:
-          REGISTRY_KEY=${{ inputs.REGISTRY_KEY }}
+          REGISTRY_KEY: ${{ inputs.REGISTRY_KEY }}
 
       - name: Log in to repo
         shell: bash {0}
