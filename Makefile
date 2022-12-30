@@ -1,6 +1,7 @@
 #!make
 
 REGISTRY_NAME=quay.io
+REGISTRY_KEY=markllama
 REGISTRY_USER=markllama
 IMAGE_NAME=bind
 CONTAINER_NAME=named
@@ -34,10 +35,10 @@ stop:
 	-podman rm ${CONTAINER_NAME}
 
 tag:
-	podman tag ${IMAGE_NAME} ${REGISTRY_NAME}/${REGISTRY_USER}/${IMAGE_NAME}
+	podman tag ${IMAGE_NAME} ${REGISTRY_NAME}/${REGISTRY_KEY}/${IMAGE_NAME}
 
 push:
-	podman push $(REGISTRY_NAME)/$(REGISTRY_USER)/${IMAGE_NAME}
+	podman push $(REGISTRY_NAME)/$(REGISTRY_KEY)/${IMAGE_NAME}
 
 $(DATADIR)/etc/rndc.key:
 	mkdir -p $(DATADIR)/etc/sysconfig
