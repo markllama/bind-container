@@ -30,6 +30,18 @@ cli:
 	  --entrypoint=/bin/bash \
 	  ${REGISTRY_NAME}/${REGISTRY_USER}/${IMAGE_NAME}
 
+rndc-conf:
+	+podman run -it --rm --privileged --init --name ${CONTAINER_NAME} --net=host \
+	  --volume ${DATADIR}:/opt:Z \
+	  ${REGISTRY_NAME}/${REGISTRY_USER}/${IMAGE_NAME} \
+	  /usr/sbin/rndc-confgen > data/rndc.conf
+	  cat data/rndc.conf | \
+	    sed -n '/Use with/,$$p' | \
+      sed '/named.conf/d ; s/^# //' \
+      > data/named-rndc.conf
+
+
+
 stop:
 	-podman stop ${CONTAINER_NAME}
 	-podman rm ${CONTAINER_NAME}
